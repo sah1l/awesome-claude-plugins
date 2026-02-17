@@ -381,6 +381,153 @@ Use `│` to separate columns:
 
 ---
 
+## Alignment Templates & Formulas
+
+### Padding Formula
+```
+inner_content_width = target_width - 2 (borders) - padding
+padding_spaces = target_width - content_length - 2
+```
+
+### Single Line Content
+For content that fits on one line:
+```
+┌─[ target_width chars total ]─┐
+│ Left content    Right pad │
+└───────────────────────────────┘
+Padding = target_width - content_length - 2
+```
+
+Example (target = 30, content = "Title"):
+```
+┌────────────────────────────┐
+│ Title                      │  (30 - 5 - 2 = 23 spaces)
+└────────────────────────────┘
+```
+
+### Multi-Line Content
+Each line must maintain the same total width:
+```
+┌─[ 40 chars total ]─┐
+│ This is a longer line of text     │
+│ that needs to wrap and still      │
+│ maintain perfect alignment        │
+└───────────────────────────────────┘
+```
+
+### Nested Components
+Calculate widths hierarchically:
+```
+Outer container: 60 chars
+  └─ Inner container A: 28 chars (fits inside outer)
+  └─ Inner container B: 28 chars (fits inside outer)
+  └─ Gap between: 2 chars
+  
+  Total: 28 + 2 + 28 = 58 chars (leaves 2 chars for outer borders)
+```
+
+Example:
+```
+┌──────────────────────────────────────────────────────────┐
+│ ┌────────────────────────┐ ┌──────────────────────────┐ │
+│ │ Card 1 Content         │ │ Card 2 Content           │ │
+│ └────────────────────────┘ └──────────────────────────┘ │
+└──────────────────────────────────────────────────────────┘
+```
+
+### Grid Layout Formula
+For N columns with G-char gaps:
+```
+col_width = (main_width - ((N-1) * G)) / N
+```
+
+Example: 3 cards in 56-char main area with 2-char gaps:
+```
+col_width = (56 - 4) / 3 = 17.33 → Use 17, 18, 17 or adjust gaps
+```
+
+---
+
+## Common Alignment Pitfalls
+
+### Pitfall 1: Right Border Drift
+❌ **WRONG** - Lines have different widths:
+```
+┌────────────────────────────┐
+│ Long text here that extends│
+│ Short                     │
+│ Another long line of text  │
+└────────────────────────────┘
+```
+
+✅ **CORRECT** - All lines same width:
+```
+┌────────────────────────────┐
+│ Long text here that extends│
+│ Short                      │
+│ Another long line of text  │
+└────────────────────────────┘
+```
+
+### Pitfall 2: Misaligned Table Columns
+❌ **WRONG** - Uneven column widths:
+```
+┌────────┬─────────────┬────────┐
+│ Name   │ Email       │ Status │
+├────────┼─────────────┼────────┤
+│ Alice  │ a@test.com  │ Active │
+│ Bob    │ bob@test.com│ Inactive│
+└────────┴─────────────┴────────┘
+```
+
+✅ **CORRECT** - Uniform column widths:
+```
+┌──────────┬─────────────┬──────────┐
+│ Name     │ Email       │ Status   │
+├──────────┼─────────────┼──────────┤
+│ Alice    │ a@test.com  │ Active   │
+│ Bob      │ bob@test.com│ Inactive │
+└──────────┴─────────────┴──────────┘
+```
+
+### Pitfall 3: Nested Container Overflow
+❌ **WRONG** - Inner box wider than outer:
+```
+┌────────────────────────────┐
+│ ┌──────────────────────────────┐ │
+│ │ This overflows the parent    │ │
+│ └──────────────────────────────┘ │
+└────────────────────────────┘
+```
+
+✅ **CORRECT** - Inner box fits with padding:
+```
+┌────────────────────────────┐
+│ ┌────────────────────────┐ │
+│ │ This fits properly     │ │
+│ └────────────────────────┘ │
+└────────────────────────────┘
+```
+
+### Pitfall 4: Multi-line Text Breaking Borders
+❌ **WRONG** - Second line shorter:
+```
+┌────────────────────────────┐
+│ This is a very long piece │
+│ of text                   │
+└────────────────────────────┘
+```
+
+✅ **CORRECT** - All lines padded equally:
+```
+┌────────────────────────────┐
+│ This is a very long piece │
+│ of text that wraps nicely │
+└────────────────────────────┘
+```
+
+---
+
 ## Layout Composition Rules
 
 1. **Always wrap the full wireframe in a markdown code block** (triple backticks)

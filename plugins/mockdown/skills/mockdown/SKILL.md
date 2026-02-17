@@ -30,16 +30,64 @@ If no input is provided, ask the user what they'd like to wireframe.
 
 Read the component patterns from `skills/mockdown/references/components.md` (relative to the plugin root). Use these exact patterns as building blocks. You MUST use box-drawing characters (`┌ ┐ └ ┘ ─ │ ├ ┤ ┬ ┴ ┼`) for borders — never use `+`, `-`, or `|` as substitutes.
 
-### Step 3: Plan the Layout
+### Step 3: Width-First Planning (CRITICAL)
 
-Before drawing, plan:
+Before drawing ANY content, you MUST calculate widths:
 
-1. **Page structure** — what are the major sections? (header, sidebar, main content, footer)
-2. **Component inventory** — what components does each section need? (nav, cards, tables, forms, etc.)
-3. **Grid/hierarchy** — how do sections relate? What's the visual hierarchy?
-4. **Width** — target 70-80 characters wide for the full wireframe
+1. **Pick a total width** — Choose 70-80 characters for the main container
+2. **Calculate component widths**:
+   - For sidebar layouts: Sidebar width (e.g., 16 chars) + Main content width (e.g., 58 chars) = Total (74 chars)
+   - For grids: Divide main content width by number of columns
+   - For cards: Each card width = (main_content_width - gaps) / number_of_cards
+3. **Determine inner content widths**:
+   - Inner content width = container width - 2 (for borders) - 2 (for padding)
+   - Example: 20-char container → 16-char inner content (20 - 2 - 2 = 16)
+4. **Write down all widths** — Document before generating any ASCII
 
-### Step 4: Generate the Wireframe
+**Example calculation for a dashboard:**
+```
+Total width: 74 chars
+Sidebar: 16 chars (14 inner)
+Main area: 58 chars (56 inner)
+  - Stat cards: 3 cards @ 18 chars each (16 inner) with 2-char gaps
+  - Table: 56 chars inner
+  - Pagination: 56 chars inner
+```
+
+### Step 4: Width Management & Alignment Rules (CRITICAL)
+
+Alignment is EVERYTHING in ASCII wireframes. Follow these strict rules:
+
+**Rule 1: Consistent Line Width**
+Every line inside a bordered container must have the EXACT same character count from the left border (├/┌/│) to the right border (┤/┐/│).
+
+**Rule 2: Character Count Verification**
+For each line, calculate: `content + left_padding + right_padding + 2 (borders) = target_width`
+- Content must be padded to fit exactly
+- Never let content overflow the border
+
+**Rule 3: Multi-line Content Alignment**
+When content wraps to multiple lines:
+- Each continuation line must align with the first line's right border
+- Use spaces to pad: `target_width - content_length - 2 = padding_spaces`
+
+**Rule 4: Nested Containers**
+Inner containers must fit within outer containers with proper spacing:
+```
+Outer: 60 chars
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │ Inner card: 30 chars                         │ Inner card: 28 chars      │
+  │ ┌────────────────────────────┐               │ ┌──────────────────────────┐│
+  │ │ Content here               │               │ │ Content here             ││
+  │ └────────────────────────────┘               │ └──────────────────────────┘│
+```
+
+**Rule 5: Table/Grid Alignment**
+- All rows must have identical total width
+- Column separators (│) must form straight vertical lines
+- Cell content must be padded to match column widths exactly
+
+### Step 5: Generate the Wireframe
 
 Produce the wireframe inside a markdown code block. Rules:
 
@@ -51,7 +99,27 @@ Produce the wireframe inside a markdown code block. Rules:
 - **Show hierarchy** — use indentation, nesting, and visual weight to convey importance
 - **Keep it lo-fi** — this is a wireframe. Convey structure and layout, not pixel-perfect design.
 
-### Step 5: Annotate
+### Step 6: Pre-Output Validation (CRITICAL)
+
+Before outputting the wireframe, you MUST verify alignment:
+
+1. **Character count check** — Pick any line in a container and count characters from left border to right border. Every line in that container must have the EXACT same count.
+
+2. **Vertical border alignment** — Visually scan down each vertical border (│ ├ ┤). They should form perfect straight lines. Any zig-zag means misalignment.
+
+3. **Padding verification** — For each line with content, verify: `actual_width == target_width`. If not, recalculate padding.
+
+4. **Nested container check** — Ensure inner containers don't overflow outer container borders.
+
+5. **Fix before output** — If ANY alignment issue is found, regenerate that section before presenting the final wireframe.
+
+**Common mistakes to catch:**
+- Right border drifting inward on long lines
+- Table rows with varying widths
+- Cards in a grid with different sizes
+- Multi-line text breaking alignment
+
+### Step 7: Annotate
 
 After the wireframe, provide a brief annotation section:
 
@@ -66,7 +134,7 @@ After the wireframe, provide a brief annotation section:
 
 This helps developers understand the intent behind the wireframe without cluttering the ASCII art itself.
 
-### Step 6: Multiple Screens (Optional)
+### Step 8: Multiple Screens (Optional)
 
 If the description implies multiple screens or states (e.g., "login page and dashboard"), generate each as a separate wireframe with a clear heading:
 
@@ -140,11 +208,87 @@ Every response MUST follow this structure:
 
 ---
 
+## Complex Layout Example
+
+**Input:** "Log analytics dashboard with sidebar navigation, stat cards showing error rate/response time/sources, status code breakdown bar chart, recent logs table with pagination, and footer"
+
+**Width Calculations:**
+```
+Total: 74 chars
+Sidebar: 16 chars (14 inner content)
+Main: 58 chars (56 inner)
+  Stat cards: 18 chars each (16 inner)
+  Table: 56 chars inner
+  Pagination: 56 chars inner
+  Footer: 56 chars inner
+```
+
+**Output:**
+
+### Log Analytics Dashboard
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│   Logo       Log Analytics     [Last 24h ▼]  [🔔] [⚙] [👤]              │
+├──────────────┬───────────────────────────────────────────────────────────┤
+│              │                                                           │
+│  🏠 Dashboard│   Log Volume Over Time                                    │
+│  🔍 Logs     │   ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓    │
+│  • Live      │   ▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░    │
+│  • Search    │   00:00   04:00   08:00   12:00   16:00   20:00   24:00  │
+│  • Explorer  │                                                           │
+│              │  ┌────────────────┐ ┌────────────────┐ ┌──────────────┐  │
+│  🚨 Alerts   │  │ Error Rate     │ │ Avg Response   │ │ Unique       │  │
+│  • Triggers  │  │                │ │ Time           │ │ Sources      │  │
+│  • Rules     │  │      2.4%      │ │     145ms      │ │      47      │  │
+│              │  │      ▲ 0.3%    │ │      ▼ 12ms    │ │      ▲ 5     │  │
+│  📊 Reports  │  └────────────────┘ └────────────────┘ └──────────────┘  │
+│              │                                                           │
+│  ⚙️ Settings │  Status Codes Breakdown                                   │
+│              │  ┌────────────────────────────────────────────────────┐   │
+│              │  │ 200 ████████████████████████████████   12,456 (78%)│   │
+│              │  │ 404 ████████                              2,890 (18%)│   │
+│              │  │ 500 █                                    445 (3%)  │   │
+│              │  │ 503                                     89 (1%)   │   │
+│              │  └────────────────────────────────────────────────────┘   │
+│              │                                                           │
+│              │  ┌────────────────────────────────────────────────────┐   │
+│              │  │ Recent Logs                              [Export ↓]│   │
+│              │  ├──────────┬───────┬──────────┬────────┬────────────┤   │
+│              │  │ Timestamp│ Level │ Service  │ Message│ Duration   │   │
+│              │  ├──────────┼───────┼──────────┼────────┼────────────┤   │
+│              │  │23:58:42  │ ERROR │api-gateway│ Conn...│ 2.3s      │   │
+│              │  │23:58:31  │ WARN  │auth-svc  │ Token...│ 145ms     │   │
+│              │  │23:58:15  │ INFO  │user-svc  │ GET /...│ 89ms      │   │
+│              │  │23:58:02  │ INFO  │payment   │ Paym... │ 456ms     │   │
+│              │  │23:57:58  │ ERROR │api-gateway│ 504...  │ 30.0s     │   │
+│              │  └──────────┴───────┴──────────┴────────┴────────────┘   │
+│              │                                                           │
+│              │  Showing 1-5 of 12,453 logs    [ < ] [1] 2 3 4 5 ... [ > ]│
+│              │                                                           │
+├──────────────┴───────────────────────────────────────────────────────────┤
+│  © 2026 LogSync                                              v2.1.0      │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
+#### Layout Notes
+
+- **Header**: Logo, title, time selector, notification/settings/profile icons
+- **Sidebar**: Navigation with icons, grouped sections (Dashboard, Logs, Alerts, Reports, Settings)
+- **Chart Area**: Bar chart showing log volume over 24 hours with time labels
+- **Stat Cards**: Three cards (18 chars each) showing Error Rate, Response Time, Unique Sources
+- **Status Codes**: Horizontal bar chart with counts and percentages
+- **Recent Logs**: Table with 5 columns showing timestamps, levels, services, messages, durations
+- **Pagination**: Page indicator with navigation controls
+- **Footer**: Copyright and version info
+
+---
+
 ## Important Rules
 
 - **Always use box-drawing characters** (`┌ ┐ └ ┘ ─ │`) — never ASCII approximations like `+--+` or `|`
 - **Always wrap wireframes in code blocks** — they only render correctly in monospace
-- **Alignment is everything** — if borders don't line up, the wireframe is broken. Double-check alignment.
+- **CRITICAL: Alignment is everything** — Every single line must have identical width. Use the padding formula: `padding = target_width - content_length - 2`. If borders don't line up, the wireframe is broken.
 - **Be generous with whitespace** — cramped wireframes are hard to read
 - **Use realistic data** — real names, plausible numbers, actual labels
 - **One wireframe per screen/state** — don't cram multiple views into one drawing
