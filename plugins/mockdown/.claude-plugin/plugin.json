@@ -2,6 +2,8 @@
   "name": "mockdown",
   "description": "Generate ASCII wireframes from UI descriptions. Describe your UI in plain English or point to a PRD, and get a terminal-friendly wireframe mockup.",
   "version": "1.0.0",
-  "author": "sah1l",
+  "author": {
+    "name": "sah1l"
+  },
   "repository": "https://github.com/sah1l/awesome-claude-plugins"
 }
