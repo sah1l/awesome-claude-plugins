@@ -1,0 +1,9 @@
+{
+  "name": "roast-my-code",
+  "description": "Roast your code with hilarious personas - Gordon Ramsay, Shakespeare, therapist, and more.",
+  "version": "1.0.0",
+  "author": {
+    "name": "sah1l"
+  },
+  "repository": "https://github.com/sah1l/awesome-claude-plugins"
+}
