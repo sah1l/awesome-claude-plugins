@@ -37,8 +37,15 @@ Before drawing ANY content, you MUST calculate widths:
 1. **Pick a total width** — Choose 70-80 characters for the main container
 2. **Calculate component widths**:
    - For sidebar layouts: Sidebar width (e.g., 16 chars) + Main content width (e.g., 58 chars) = Total (74 chars)
+   - IMPORTANT: When two regions share a border (e.g., sidebar │ main),
+     count that border character ONCE, not twice.
+     Formula: total = 1(left) + sidebar_inner + 1(shared) + main_inner + 1(right)
+     Example: 76 = 1 + 14 + 1 + 59 + 1
    - For grids: Divide main content width by number of columns
    - For cards: Each card width = (main_content_width - gaps) / number_of_cards
+   - Grid row total: leading_pad + card1 + gap + card2 + ... + cardN + trailing_pad = parent_inner_width
+     Every card row must equal the parent's inner width exactly.
+     Example: 1(pad) + 18(card) + 1(gap) + 18(card) + 1(gap) + 18(card) + 2(pad) = 59
 3. **Determine inner content widths**:
    - Inner content width = container width - 2 (for borders) - 2 (for padding)
    - Example: 20-char container → 16-char inner content (20 - 2 - 2 = 16)
@@ -86,6 +93,18 @@ Outer: 60 chars
 - All rows must have identical total width
 - Column separators (│) must form straight vertical lines
 - Cell content must be padded to match column widths exactly
+- Table width formula: sum(col_widths) + (num_cols - 1) + 2 = table_width
+  - col_widths = characters between separators (content + padding)
+  - (num_cols - 1) = internal │ separators
+  - 2 = left and right border characters
+  - Example: cols [10, 11, 9, 9, 10] → 49 + 4 + 2 = 55 chars wide
+
+**Rule 6: ASCII-Safe Characters Only**
+Never use emoji or ambiguous-width Unicode inside wireframe code blocks. These characters render at unpredictable widths (1 or 2 columns) across different terminals and fonts, breaking alignment.
+- Use `*` for bullets (not •)
+- Use `+`/`-` for trend indicators (not ▲/▼)
+- Use `[H]`, `[S]`, `[!]` style labels for icons (not 🏠🔍🚨)
+- Fill characters `█ ░ ▓` are OK — they render as single-width in monospace code blocks
 
 ### Step 5: Generate the Wireframe
 
@@ -112,6 +131,8 @@ Before outputting the wireframe, you MUST verify alignment:
 4. **Nested container check** — Ensure inner containers don't overflow outer container borders.
 
 5. **Fix before output** — If ANY alignment issue is found, regenerate that section before presenting the final wireframe.
+
+6. **Inside-out verification** — Check the innermost containers first, then work outward. Errors in inner containers compound when nested. Verify: inner table width → card width → card row total → main area width → full layout width.
 
 **Common mistakes to catch:**
 - Right border drifting inward on long lines
