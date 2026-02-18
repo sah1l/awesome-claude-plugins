@@ -1,7 +1,7 @@
 {
   "name": "mockdown",
   "description": "Generate ASCII wireframes from UI descriptions. Describe your UI in plain English or point to a PRD, and get a terminal-friendly wireframe mockup.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "sah1l"
   },

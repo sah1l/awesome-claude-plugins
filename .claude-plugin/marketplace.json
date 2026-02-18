@@ -8,7 +8,7 @@
       "name": "roast-my-code",
       "source": "./plugins/roast-my-code",
       "description": "Get your code brutally roasted by hilarious personas — Gordon Ramsay, Shakespeare, a passive-aggressive therapist, and more. Real code review value wrapped in entertainment.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "sah1l"
       },
@@ -19,7 +19,7 @@
       "name": "mockdown",
       "source": "./plugins/mockdown",
       "description": "Generate ASCII wireframes from UI descriptions. Describe your UI in plain English or point to a PRD, and get a terminal-friendly wireframe mockup.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "sah1l"
       },
