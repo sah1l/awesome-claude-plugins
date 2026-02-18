@@ -61,50 +61,66 @@ Main area: 58 chars (56 inner)
   - Pagination: 56 chars inner
 ```
 
-### Step 4: Width Management & Alignment Rules (CRITICAL)
+**Calculate padding targets from your actual content:**
+- List your actual values: "156", "$1.2M", "+24", "+12%"
+- Find the longest: "$1.2M" = 5 chars
+- All other values in that row MUST be padded to 5 chars minimum
+- Example: "156" → "  156", "+24" → "  +24"
 
-Alignment is EVERYTHING in ASCII wireframes. Follow these strict rules:
+### Step 4: Handle Variable Content (CRITICAL)
 
-**Rule 1: Consistent Line Width**
-Every line inside a bordered container must have the EXACT same character count from the left border (├/┌/│) to the right border (┤/┐/│).
+This is where most wireframes break. Variable-length content (numbers, names, values) requires careful padding.
 
-**Rule 2: Character Count Verification**
-For each line, calculate: `content + left_padding + right_padding + 2 (borders) = target_width`
-- Content must be padded to fit exactly
-- Never let content overflow the border
+**The Golden Rule: Pad to the longest content, not to container width.**
 
-**Rule 3: Multi-line Content Alignment**
-When content wraps to multiple lines:
-- Each continuation line must align with the first line's right border
-- Use spaces to pad: `target_width - content_length - 2 = padding_spaces`
-
-**Rule 4: Nested Containers**
-Inner containers must fit within outer containers with proper spacing:
+**For rows of cards/values:**
 ```
-Outer: 60 chars
-┌──────────────────────────────────────────────────────────┐
-│ ┌──────────────────────────┐ ┌──────────────────────────┐│
-│ │ Inner card A: 28 chars   │ │ Inner card B: 28 chars   ││
-│ └──────────────────────────┘ └──────────────────────────┘│
-└──────────────────────────────────────────────────────────┘
+Problem: Cards have different value lengths
+┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+│ Total Leads │ │ Open Deals  │ │ Revenue     │
+│             │ │             │ │             │
+│    2,847    │ │     156     │ │  $1.2M      │  ← "156" is 3 chars, "$1.2M" is 5 chars
+│    +18%     │ │    +24      │ │   +12%     │  ← inconsistent!
+└─────────────┘ └─────────────┘ └─────────────┘
+
+Solution: Pad everything to match the LONGEST content in that row
+┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+│ Total Leads │ │ Open Deals  │ │ Revenue     │
+│             │ │             │ │             │
+│    2,847    │ │      156    │ │   $1.2M     │  ← all 8 chars wide
+│    +18%     │ │      +24    │ │    +12%     │  ← all 8 chars wide
+└─────────────┘ └─────────────┘ └─────────────┘
 ```
 
-**Rule 5: Table/Grid Alignment**
-- All rows must have identical total width
-- Column separators (│) must form straight vertical lines
-- Cell content must be padded to match column widths exactly
-- Table width formula: sum(col_widths) + (num_cols - 1) + 2 = table_width
-  - col_widths = characters between separators (content + padding)
-  - (num_cols - 1) = internal │ separators
-  - 2 = left and right border characters
-  - Example: cols [10, 11, 9, 9, 10] → 49 + 4 + 2 = 55 chars wide
+**For tables:**
+- Each column: pad cell content to match the LONGEST content in that column (including header)
+- Do NOT pad each cell to container width
+```
+Problem:
+┌──────────┬───────────┬─────────┐
+│ Deal     │ Company   │ Value   │
+├──────────┼───────────┼─────────┤
+│ ERP Impl │ Acme Corp │ $85,000 │  ← Company column misaligned
+│ Cloud Mig│ TechFlow  │ $42,000 │
+└──────────┴───────────┴─────────┘
 
-**Rule 6: ASCII-Safe Characters Only**
-Never use emoji or ambiguous-width Unicode inside wireframe code blocks. These characters render at unpredictable widths (1 or 2 columns) across different terminals and fonts, breaking alignment.
-- Use `*` for bullets (not •)
-- Use `+`/`-` for trend indicators (not ▲/▼)
-- Use `[H]`, `[S]`, `[!]` style labels for icons (not 🏠🔍🚨)
-- Fill characters `█ ░ ▓` are OK — they render as single-width in monospace code blocks
+Solution - pad to longest in each column:
+┌──────────┬────────────┬──────────┐
+│ Deal     │ Company    │ Value    │
+├──────────┼────────────┼──────────┤
+│ ERP Impl │ Acme Corp  │ $85,000  │
+│ Cloud Mig│ TechFlow   │ $42,000  │
+└──────────┴────────────┴──────────┘
+```
+
+**For bar charts:**
+- Pad the numeric labels at the RIGHT side (before the value)
+- The closing paren or number should align vertically
+
+**Before calculating padding:**
+1. List the longest content in each group (row, column)
+2. Use that length as your padding target
+3. Calculate padding: `spaces = target_length - content_length`
 
 ### Step 5: Generate the Wireframe
 
@@ -118,27 +134,19 @@ Produce the wireframe inside a markdown code block. Rules:
 - **Show hierarchy** — use indentation, nesting, and visual weight to convey importance
 - **Keep it lo-fi** — this is a wireframe. Convey structure and layout, not pixel-perfect design.
 
-### Step 6: Pre-Output Validation (CRITICAL)
+### Step 6: Quick Visual Check
 
-Before outputting the wireframe, you MUST verify alignment:
+Before outputting, do a quick visual scan:
 
-1. **Character count check** — Pick any line in a container and count characters from left border to right border. Every line in that container must have the EXACT same count.
+1. **Right edges straight?** Look down the right border of any box — it should be a perfectly vertical line. Any drift inward means padding is wrong.
 
-2. **Vertical border alignment** — Visually scan down each vertical border (│ ├ ┤). They should form perfect straight lines. Any zig-zag means misalignment.
+2. **Table columns aligned?** Check that the `│` characters form straight vertical lines throughout.
 
-3. **Padding verification** — For each line with content, verify: `actual_width == target_width`. If not, recalculate padding.
+3. **Same-type rows same width?** All stat cards in a row should have the same total width. All table rows should be identical.
 
-4. **Nested container check** — Ensure inner containers don't overflow outer container borders.
+4. **Fix immediately if caught.** If you see any wobble or drift, fix that section before outputting.
 
-5. **Fix before output** — If ANY alignment issue is found, regenerate that section before presenting the final wireframe.
-
-6. **Inside-out verification** — Check the innermost containers first, then work outward. Errors in inner containers compound when nested. Verify: inner table width → card width → card row total → main area width → full layout width.
-
-**Common mistakes to catch:**
-- Right border drifting inward on long lines
-- Table rows with varying widths
-- Cards in a grid with different sizes
-- Multi-line text breaking alignment
+That's it — don't overthink it. If it looks straight, it is straight.
 
 ### Step 7: Annotate
 
@@ -244,7 +252,7 @@ Main: 58 chars (56 inner)
   Footer: 56 chars inner
 ```
 
-**Output:**
+**Output:** 
 
 ### Log Analytics Dashboard
 
@@ -252,20 +260,24 @@ Main: 58 chars (56 inner)
 ┌──────────────────────────────────────────────────────────────────────────┐
 │  Logo       Log Analytics       [Last 24h v]   [!] [*] [U]               │
 ├──────────────┬───────────────────────────────────────────────────────────┤
-│              │                                                           │
-│  [H] Dashbrd │  Log Volume Over Time                                     │
-│  [S] Logs    │  ████████████████████████████████████████████████████████ │
-│  * Live      │  ████████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   │
-│  * Search    │  00:00   04:00   08:00   12:00   16:00   20:00   24:00    │
-│  * Explorer  │                                                           │
+│              │  Log Volume Over Time                                     │
+│  [H] Dashbrd │  ┌─────────────────────────────────────────────────────┐  │
+│  [S] Logs    │  │                      █                              │  │
+│  * Live      │  │                      █             █                │  │
+│  * Search    │  │               █      █      █      █                │  │
+│  * Explorer  │  │        █      █      █      █      █      █         │  │
+│              │  │ █      █      █      █      █      █      █         │  │
+│  [!] Alerts  │  │ ─────────────────────────────────────────────────── │  │
+│  * Triggers  │  │ 00     04     08     12     16     20     24        │  │
+│  * Rules     │  └─────────────────────────────────────────────────────┘  │
 │              │ ┌────────────────┐ ┌────────────────┐ ┌────────────────┐  │
-│  [!] Alerts  │ │ Error Rate     │ │ Avg Response   │ │ Unique         │  │
-│  * Triggers  │ │                │ │ Time           │ │ Sources        │  │
-│  * Rules     │ │     2.4%       │ │    145ms       │ │     47         │  │
+│  [R] Reports │ │ Error Rate     │ │ Avg Response   │ │ Unique         │  │
+│              │ │                │ │ Time           │ │ Sources        │  │
+│  [*] Settings│ │     2.4%       │ │    145ms       │ │     47         │  │
 │              │ │     +0.3%      │ │     -12ms      │ │     +5         │  │
-│  [R] Reports │ └────────────────┘ └────────────────┘ └────────────────┘  │
+│              │ └────────────────┘ └────────────────┘ └────────────────┘  │
 │              │                                                           │
-│  [*] Settings│  Status Codes Breakdown                                   │
+│              │  Status Codes Breakdown                                   │
 │              │  ┌───────────────────────────────────────────────────┐    │
 │              │  │ 200 ██████████████████████████████  12,456 (78%)  │    │
 │              │  │ 404 ████████████                    2,890 (18%)   │    │
@@ -296,7 +308,7 @@ Main: 58 chars (56 inner)
 
 - **Header**: Logo, title, time selector, notification/settings/profile indicators
 - **Sidebar**: Navigation with labels, grouped sections (Dashboard, Logs, Alerts, Reports, Settings)
-- **Chart Area**: Bar chart showing log volume over 24 hours with time labels
+- **Chart Area**: Vertical bar chart showing log volume over 24 hours
 - **Stat Cards**: Three cards (18 chars each) showing Error Rate, Response Time, Unique Sources
 - **Status Codes**: Horizontal bar chart with counts and percentages
 - **Recent Logs**: Table with 5 columns showing timestamps, levels, services, messages, durations

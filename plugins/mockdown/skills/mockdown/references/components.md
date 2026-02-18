@@ -276,7 +276,7 @@ Home  ›  Products  ›  Category  ›  Item
 ## Progress Bar
 
 ```
-Progress: [████████████░░░░░░░░] 60%
+Progress: [████████████········] 60%
 ```
 
 ## Activity Feed / List
@@ -295,6 +295,8 @@ Progress: [████████████░░░░░░░░] 60%
 
 ## Chart / Graph Placeholder
 
+### Area/Line Chart (Horizontal)
+For time-series data, use horizontal fills:
 ```
 ┌─────────────────────────────────────────┐
 │  Chart Title                            │
@@ -306,7 +308,8 @@ Progress: [████████████░░░░░░░░] 60%
 └─────────────────────────────────────────┘
 ```
 
-Or bar chart:
+### Horizontal Bar Chart
+For comparing categories:
 ```
   Revenue
   Q1  ████████████████  $40k
@@ -314,6 +317,69 @@ Or bar chart:
   Q3  ██████████████  $35k
   Q4  ████████████████████████  $60k
 ```
+
+For status breakdowns:
+```
+  ┌───────────────────────────────────────────────────┐
+  │ 200 ██████████████████████████████  12,456 (78%)  │
+  │ 404 ████████████                    2,890 (18%)   │
+  │ 500 ██                                445 (3%)    │
+  │ 503                                   89 (1%)     │
+  └───────────────────────────────────────────────────┘
+```
+
+### Vertical Bar Chart (Time-Series)
+
+Use the **slot-based column system** so bars and labels always align.
+
+Pattern 1 — 7 bars, slot_width 5, inner 38:
+```
+  ┌──────────────────────────────────────┐
+  │                █                     │
+  │                █         █           │
+  │           █    █    █    █           │
+  │      █    █    █    █    █    █      │
+  │ █    █    █    █    █    █    █      │
+  │ ──────────────────────────────────── │
+  │ 00   04   08   12   16   20   24     │
+  └──────────────────────────────────────┘
+```
+
+Pattern 2 — 4 bars, slot_width 6, inner 27:
+```
+  ┌───────────────────────────┐
+  │                   █       │
+  │             █     █       │
+  │       █     █     █       │
+  │ █     █     █     █       │
+  │ █     █     █     █       │
+  │ ───────────────────────── │
+  │ Q1    Q2    Q3    Q4      │
+  └───────────────────────────┘
+```
+
+#### Slot-Based Construction Formula
+
+Every bar lives in a fixed-width **slot**. Because bar and label share the same column offset, alignment is structural.
+
+1. **Choose slot_width** = `label_char_count + gap`  (gap >= 3)
+2. **Calculate widths**:
+   - `content_width = 1 (leading space) + num_bars × slot_width`
+   - `trailing = inner_width - content_width`  (must be >= 1)
+3. **Build each row** using the same slot positions:
+   - **Bar rows** — place `█` at the slot offset; fill the rest with spaces
+   - **Axis row** — `" " + "─" × (inner_width - 2) + " "`
+   - **Label row** — place each label at its slot offset; pad remaining with spaces
+4. **Verify** — every inner line must be exactly `inner_width` characters
+
+Worked example — 6-month chart (Jan–Jun):
+```
+labels:      Jan  Feb  Mar  Apr  May  Jun   (3 chars each)
+slot_width:  3 + 3 = 6
+content:     1 + 6 × 6 = 37
+inner_width: 39   →   trailing = 2
+```
+Slot offsets: 1, 7, 13, 19, 25, 31. Every bar row, axis, and label row uses these same positions.
 
 ## Image / Media Placeholder
 
@@ -520,6 +586,46 @@ col_width = (56 - 4) / 3 = 17.33 → Use 17, 18, 17 or adjust gaps
 │ This is a very long piece  │
 │ of text that wraps nicely  │
 └────────────────────────────┘
+```
+
+### Pitfall 5: Variable-Length Content Not Aligned (Most Common!)
+❌ **WRONG** - Each value padded differently (causes wobbly right border):
+```
+┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+│ Total Leads │ │ Open Deals  │ │ Revenue     │
+│             │ │             │ │             │
+│    2,847    │ │     156     │ │  $1.2M      │  ← 156 is 3 chars, $1.2M is 5
+│    +18%     │ │    +24      │ │   +12%      │  ← inconsistent padding
+└─────────────┘ └─────────────┘ └─────────────┘
+```
+
+✅ **CORRECT** - Pad to the LONGEST content in each row:
+```
+┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+│ Total Leads │ │ Open Deals  │ │ Revenue     │
+│             │ │             │ │             │
+│    2,847    │ │      156    │ │   $1.2M     │  ← all values padded to 8 chars
+│    +18%     │ │      +24    │ │    +12%     │  ← all padded to 8 chars
+└─────────────┘ └─────────────┘ └─────────────┘
+```
+
+For TABLES: pad each cell to the longest content in that column:
+```
+❌ WRONG:
+┌──────────┬───────────┬──────────┐
+│ Deal     │ Company   │ Value    │
+├──────────┼───────────┼──────────┤
+│ ERP Impl │ Acme Corp │ $85,000  │
+│ Cloud Mig│ TechFlow  │ $42,000  │
+└──────────┴───────────┴──────────┘
+
+✅ CORRECT - pad Company column to longest (TechFlow = 8 chars):
+┌──────────┬────────────┬──────────┐
+│ Deal     │ Company    │ Value    │
+├──────────┼────────────┼──────────┤
+│ ERP Impl │ Acme Corp  │ $85,000  │
+│ Cloud Mig│ TechFlow   │ $42,000  │
+└──────────┴────────────┴──────────┘
 ```
 
 ---
