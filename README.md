@@ -125,6 +125,27 @@ Produces clean ASCII wireframes with layout annotations:
 
 ---
 
+### Hermes Tweet
+
+Use native Hermes Agent X/Twitter automation for read-first social research,
+trend monitoring, support triage, giveaway audits, and controlled account
+actions.
+
+| Command | Description |
+|---------|-------------|
+| `/hermes-tweet:hermes-tweet` | Install and operate Hermes Tweet with read-first defaults |
+
+Install Hermes Tweet in the Hermes runtime:
+
+```bash
+hermes plugins install Xquik-dev/hermes-tweet --enable
+```
+
+Keep `tweet_action` disabled unless the session has explicit approval for
+account-changing work.
+
+---
+
 ## Contributing
 
 1. Fork the repo
