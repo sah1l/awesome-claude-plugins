@@ -3,6 +3,9 @@
   "owner": {
     "name": "sah1l"
   },
+  "metadata": {
+    "description": "A curated collection of awesome Claude Code plugins"
+  },
   "plugins": [
     {
       "name": "roast-my-code",
@@ -24,6 +27,17 @@
         "name": "sah1l"
       },
       "repository": "https://github.com/sah1l/awesome-claude-plugins",
+      "license": "MIT"
+    },
+    {
+      "name": "hermes-tweet",
+      "source": "./plugins/hermes-tweet",
+      "description": "Native Hermes Agent X/Twitter plugin workflow for read-first social research and opt-in account actions.",
+      "version": "0.1.6",
+      "author": {
+        "name": "Xquik"
+      },
+      "repository": "https://github.com/Xquik-dev/hermes-tweet",
       "license": "MIT"
     }
   ]
