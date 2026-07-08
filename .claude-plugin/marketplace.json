@@ -1,5 +1,6 @@
 {
   "name": "awesome-claude-plugins",
+  "description": "A curated collection of Claude Code plugins for local Claude Code workflows.",
   "owner": {
     "name": "sah1l"
   },
@@ -24,6 +25,18 @@
         "name": "sah1l"
       },
       "repository": "https://github.com/sah1l/awesome-claude-plugins",
+      "license": "MIT"
+    },
+    {
+      "name": "tree-ring-memory",
+      "source": "./plugins/tree-ring-memory",
+      "description": "Local-first memory lifecycle guidance for Claude Code: recall, evidence-backed capture, audit, consolidation, redaction, and forgetting.",
+      "version": "0.1.0",
+      "author": {
+        "name": "TerminallyLazy",
+        "url": "https://github.com/TerminallyLazy"
+      },
+      "repository": "https://github.com/TerminallyLazy/tree-ring-memory-claude-plugin",
       "license": "MIT"
     }
   ]

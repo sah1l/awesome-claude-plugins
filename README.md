@@ -14,6 +14,7 @@ claude plugin marketplace add sah1l/awesome-claude-plugins
 # Install individual plugins
 claude plugin install roast-my-code@awesome-claude-plugins
 claude plugin install mockdown@awesome-claude-plugins
+claude plugin install tree-ring-memory@awesome-claude-plugins
 ```
 
 ### Local Development
@@ -23,6 +24,7 @@ git clone https://github.com/sah1l/awesome-claude-plugins.git
 claude plugin marketplace add ./awesome-claude-plugins
 claude plugin install roast-my-code@awesome-claude-plugins
 claude plugin install mockdown@awesome-claude-plugins
+claude plugin install tree-ring-memory@awesome-claude-plugins
 ```
 
 ## Updating
@@ -32,6 +34,7 @@ Pull the latest changes, then run:
 ```bash
 claude plugin update roast-my-code@awesome-claude-plugins
 claude plugin update mockdown@awesome-claude-plugins
+claude plugin update tree-ring-memory@awesome-claude-plugins
 ```
 
 ## Making Changes
@@ -122,6 +125,20 @@ Produces clean ASCII wireframes with layout annotations:
 |               |                                                        |
 +---------------+--------------------------------------------------------+
 ```
+
+---
+
+### Tree Ring Memory
+
+Local-first memory lifecycle guidance for Claude Code agents.
+
+| Command | Description |
+|---------|-------------|
+| `/tree-ring-memory:tree-ring-memory` | Recall project memory, capture validated lessons, audit stale entries, and apply explicit forgetting |
+
+Use it before context-dependent work or at closeout when an agent should preserve a concise decision, lesson, warning, preference, or evidence-backed outcome without storing transcripts.
+
+Canonical project: <https://github.com/TerminallyLazy/Tree-Ring-Memory>
 
 ---
 
