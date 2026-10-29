@@ -25,6 +25,17 @@
       },
       "repository": "https://github.com/sah1l/awesome-claude-plugins",
       "license": "MIT"
+    },
+    {
+      "name": "file-links",
+      "source": "./plugins/file-links",
+      "description": "Makes file paths in Claude's replies clickable. A click opens the file in the app the OS assigns to its type.",
+      "version": "1.0.0",
+      "author": {
+        "name": "sah1l"
+      },
+      "repository": "https://github.com/sah1l/awesome-claude-plugins",
+      "license": "MIT"
     }
   ]
 }

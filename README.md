@@ -14,6 +14,7 @@ claude plugin marketplace add sah1l/awesome-claude-plugins
 # Install individual plugins
 claude plugin install roast-my-code@awesome-claude-plugins
 claude plugin install mockdown@awesome-claude-plugins
+claude plugin install file-links@awesome-claude-plugins
 ```
 
 ### Local Development
@@ -23,6 +24,7 @@ git clone https://github.com/sah1l/awesome-claude-plugins.git
 claude plugin marketplace add ./awesome-claude-plugins
 claude plugin install roast-my-code@awesome-claude-plugins
 claude plugin install mockdown@awesome-claude-plugins
+claude plugin install file-links@awesome-claude-plugins
 ```
 
 ## Updating
@@ -32,6 +34,7 @@ Pull the latest changes, then run:
 ```bash
 claude plugin update roast-my-code@awesome-claude-plugins
 claude plugin update mockdown@awesome-claude-plugins
+claude plugin update file-links@awesome-claude-plugins
 ```
 
 ## Making Changes
@@ -122,6 +125,32 @@ Produces clean ASCII wireframes with layout annotations:
 |               |                                                        |
 +---------------+--------------------------------------------------------+
 ```
+
+---
+
+### File Links
+
+Makes file paths in Claude's replies clickable. A click opens the file in the app your OS assigns to its type: a spreadsheet in Excel, a PDF in your PDF reader, a folder in Explorer or Finder.
+
+It is a mod (a hooks module with no skills or commands), so there is nothing to invoke. Install it and new replies show their file paths as links.
+
+```
+● Saved the report to C:\work\app\reports\Q3.xlsx
+                      ^ click to open it in Excel
+```
+
+**What gets linked:**
+- Paths that exist on disk: absolute (`C:\work\app\report.xlsx`, `/home/me/notes.md`), relative to the project (`src/main.py`), `~/...` and Git Bash style `/c/Users/...`
+- A line number after a path (`src/main.py:42`) stays in the label and is dropped when the file opens
+- Markdown links whose target is a file path
+- Nothing inside code blocks. An inline code span is linked only when it holds nothing but a path.
+
+**Clicking:**
+- In the fullscreen terminal (`"tui": "fullscreen"` in settings), a plain click opens the file. Ctrl+click still does what your terminal does.
+- Outside fullscreen, paths become `file:///` links and your terminal opens them.
+- Files that would run when opened (`.bat`, `.exe`, `.ps1`, `.py`, `.sh`, `.reg` and similar) are never run. They open in their editor where the OS has one, otherwise their folder opens with the file selected.
+
+Files open with `Invoke-Item` on Windows, `open` on macOS and `xdg-open` on Linux. Built and tested on Windows. The macOS and Linux paths are untested.
 
 ---
 
